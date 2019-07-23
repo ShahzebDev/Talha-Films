@@ -17,6 +17,8 @@ pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
 pod 'GoogleSignIn'
+pod 'Google-Mobile-Ads-SDK'
+pod 'SVProgressHUD'
 pod "SkeletonView"
 
 end

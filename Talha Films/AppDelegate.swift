@@ -14,6 +14,8 @@ import FBSDKCoreKit
 import Firebase
 import FirebaseAuth
 import Network
+import GoogleMobileAds
+import SVProgressHUD
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
 
@@ -22,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
         check()
         FirebaseApp.configure()
         
@@ -59,12 +62,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
             print("\(error.localizedDescription)")
         } else {
             // Perform any operations on signed in user here.
-            let userId = user.userID                  // For client-side use only!
-            let idToken = user.authentication.idToken // Safe to send to the server
-            let fullName = user.profile.name
-            let givenName = user.profile.givenName
-            let familyName = user.profile.familyName
-            let email = user.profile.email
+            guard let userId = user.userID  else {return}             // For client-side use only!
+            guard let idToken = user.authentication.idToken else {return}// Safe to send to the server
+            guard let fullName = user.profile.name else {return}
+            guard  let givenName = user.profile.givenName else {return}
+            guard let familyName = user.profile.familyName else {return}
+            guard let email = user.profile.email else {return}
             // ...
             
             print(userId)

@@ -4,7 +4,7 @@
 //
 //  Created by shahzeb yousaf on 12/07/2019.
 //  Copyright © 2019 Moazzam Tahir. All rights reserved.
-//
+// Test unitID ca-app-pub-3940256099942544/2934735716
 
 import UIKit
 import GoogleSignIn
@@ -14,9 +14,13 @@ import FBSDKCoreKit
 import FBSDKLoginKit
 import Firebase
 import FirebaseAuth
-
-class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
-    @IBOutlet weak var label: UILabel!
+import GoogleMobileAds
+import SVProgressHUD
+class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate,GADBannerViewDelegate{
+    
+    
+    @IBOutlet weak var banner: GADBannerView!
+    
     
     
     let logoImageView: UIImageView = {
@@ -45,8 +49,8 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
             
             ValueLabel.isHidden = true
             let emailval = UserDefaults.standard.string(forKey: "email")
-            var label = UILabel(frame: CGRect(x: 30, y: 400, width: 200, height: 21))
-            var maillabel = UILabel(frame: CGRect(x: 110, y: 400, width: 200, height: 21))
+            let label = UILabel(frame: CGRect(x: 30, y: 400, width: 200, height: 21))
+            let maillabel = UILabel(frame: CGRect(x: 110, y: 400, width: 200, height: 21))
             //label.center = CGPoint(x: 160, y: 284)
             label.textAlignment = .left
             label.text = "Email:"
@@ -86,6 +90,14 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        banner.isHidden = true
+        banner.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+        banner.rootViewController =  self
+        banner.load(GADRequest())
+        banner.delegate = self
+        
        createEmailLabel()
        configration()
         
@@ -106,6 +118,24 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
         loginButton.delegate = self
         loginButton.permissions = ["email","public_profile"]
     }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        banner.isHidden = false
+        banner.alpha = 0
+        UIView.animate(withDuration: 1) {
+            self.banner.alpha = 1
+        }
+        print("ads is showing")
+    }
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("user is leave the app")
+    }
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        banner.isHidden =  true
+        print("Ads is not showing failed to receive ads")
+        
+    }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         if Reachability.isConnectedToNetwork() == true
@@ -134,6 +164,7 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
     func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
         print("User is sucessfully logout")
         //Changing views from current VC back to LoginVC.
+            banner.isHidden = true
             UserDefaults.standard.removeObject(forKey: "email")
             let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "UserProfile")
             let nvc = UINavigationController(rootViewController: vc)
@@ -165,6 +196,8 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
                 return
             }
             print("sucessfully logged in with user",user)
+            SVProgressHUD.show(withStatus: "Loading...")
+            SVProgressHUD.dismiss(withDelay: 3)
             //Changing views from current VC back to NavVC.
             let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "navStory")
             let nvc = UINavigationController(rootViewController: vc)

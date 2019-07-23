@@ -10,8 +10,54 @@ import UIKit
 import Foundation
 import Alamofire
 import SkeletonView
-
-class HomeCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+import GoogleMobileAds
+import SVProgressHUD
+class HomeCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout,GADBannerViewDelegate {
+    
+    var bannerView: GADBannerView!
+    
+    
+    func makeView(){
+        
+        let myNewView=UIView(frame: CGRect(x: 10, y: 760, width: view.frame.width - 32, height: 50))
+        
+//        logoImageView.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 150, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 150)
+//        logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+       
+        
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        myNewView.addSubview(bannerView)
+//        myNewView.anchor(top: view.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 150, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 50)
+//        myNewView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+        bannerView.rootViewController =  self
+        bannerView.load(GADRequest())
+        bannerView.delegate =  self
+        // Change UIView background colour
+        myNewView.backgroundColor=UIColor.red
+        
+        // Add rounded corners to UIView
+        //myNewView.layer.cornerRadius=25
+        
+        // Add border to UIView
+        myNewView.layer.borderWidth=2
+        
+        // Change UIView Border Color to Red
+        myNewView.layer.borderColor = UIColor.white.cgColor
+        
+        // Add UIView as a Subview
+        self.view.addSubview(myNewView)
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Ads is showing")
+    }
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("faild to load ads")
+    }
+    
+    
+    
     
     var shouldAnimate = true //to animate the cell
     var fetchingMore = false
@@ -31,7 +77,9 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        SVProgressHUD.show(withStatus: "Loading...")
+        SVProgressHUD.dismiss(withDelay: 3)
+        makeView()
         navigationItem.title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true //to display large title
         navigationController?.navigationItem.largeTitleDisplayMode = .always

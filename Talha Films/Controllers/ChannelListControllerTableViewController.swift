@@ -10,7 +10,7 @@ import UIKit
 import Foundation
 import Alamofire
 import SkeletonView
-
+import SVProgressHUD
 class ChannelListControllerTableViewController: UITableViewController {
     
     var shouldAnimate = true
@@ -25,7 +25,8 @@ class ChannelListControllerTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        SVProgressHUD.show(withStatus: "Loading...")
+        SVProgressHUD.dismiss(withDelay: 3)
         navigationItem.title = "Channels"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationItem.largeTitleDisplayMode = .never

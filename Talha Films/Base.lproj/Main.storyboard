@@ -400,15 +400,32 @@
                     <view key="view" contentMode="scaleToFill" id="ezX-4b-9iy">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yo0-EL-HDO" customClass="GADBannerView">
+                                <rect key="frame" x="20" y="368" width="374" height="51"/>
+                                <color key="backgroundColor" red="1" green="0.29309662419999999" blue="0.83832549779999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="51" id="aC0-jL-55K"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="yo0-EL-HDO" firstAttribute="leading" secondItem="MnJ-nN-f6A" secondAttribute="leading" constant="20" id="Gs8-c4-FNb"/>
+                            <constraint firstItem="MnJ-nN-f6A" firstAttribute="trailing" secondItem="yo0-EL-HDO" secondAttribute="trailing" constant="20" id="TVc-3k-v61"/>
+                            <constraint firstItem="yo0-EL-HDO" firstAttribute="top" secondItem="MnJ-nN-f6A" secondAttribute="top" constant="280" id="kbh-7J-hx6"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="MnJ-nN-f6A"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="AiA-vX-2nC"/>
                     <navigationItem key="navigationItem" id="x2g-Zh-lw1"/>
+                    <connections>
+                        <outlet property="banner" destination="yo0-EL-HDO" id="RFK-y2-Kyg"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TYy-Ab-SMK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1114.4927536231885" y="959.59821428571422"/>
+            <point key="canvasLocation" x="1114.4927536231885" y="959.51086956521749"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Byn-eo-Awu">

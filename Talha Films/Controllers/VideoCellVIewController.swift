@@ -10,8 +10,11 @@ import UIKit
 import Alamofire
 import WebKit
 import SkeletonView
-
-class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+import GoogleMobileAds
+class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,GADInterstitialDelegate {
+   
+    
+    
     
     var shouldAnimate = true
     
@@ -29,13 +32,31 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     @IBOutlet var viewCount: UILabel!
     @IBOutlet var collectionView: UICollectionView!
     
+    var intersitial:GADInterstitial!
     override func viewDidLoad() {
         super.viewDidLoad()
+        //bannerView.isHidden =  true
         
+        intersitial = createAndLoadInterstitial()
+        
+        if intersitial.isReady {
+            intersitial.present(fromRootViewController: self)
+        }else{
+            print("Ads is not ready")
+        }
         collectionView?.register(RecommendedVideo.self, forCellWithReuseIdentifier: "cell")
         
         fetchVideos()
     }
+    
+    func createAndLoadInterstitial() -> GADInterstitial {
+        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        interstitial.delegate = self
+        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    
     func fetchVideos() {
         
         let channelId = videoDetails?.channelId!
