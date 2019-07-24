@@ -16,11 +16,12 @@ import FirebaseAuth
 import Network
 import GoogleMobileAds
 import SVProgressHUD
+import UserNotifications
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
 
     var window: UIWindow?
-
+    let userCurrent = UNUserNotificationCenter.current()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -33,6 +34,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         return true
     }
+//    func register(){
+//        let userCurrent = UNUserNotificationCenter.current()
+//        userCurrent.requestAuthorization(options: [.alert,.sound,.badge]) { (permission, error) in
+//            if !permission{
+//                print("User is not granted permissions")
+//            }else{
+//                print("User has granted permissions")
+//            }
+//
+//        }
+//    }
 
     func check(){
         if UserDefaults.standard.value(forKey: "email") != nil{

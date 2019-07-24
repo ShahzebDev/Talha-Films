@@ -12,9 +12,47 @@ import Alamofire
 import SkeletonView
 import GoogleMobileAds
 import SVProgressHUD
+import UserNotifications
 class HomeCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout,GADBannerViewDelegate {
     
     var bannerView: GADBannerView!
+    
+    func register(){
+        let userCurrent = UNUserNotificationCenter.current()
+        userCurrent.requestAuthorization(options: [.alert,.sound,.badge]) { (permission, error) in
+            if !permission{
+                print("User is not granted permissions")
+            }else{
+                print("User has granted permissions")
+            }
+            
+        }
+    }
+    func schedule(){
+        
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        let content = UNMutableNotificationContent()
+        content.title = "Talha Films"
+        content.body = "New Videos received check it out "
+        //content.badge = 2
+        content.categoryIdentifier = "alarm"
+        content.sound = .default
+        //content.launchImageName = "user"
+        
+        var dateComponents = DateComponents()
+        dateComponents.hour = 15
+        dateComponents.minute = 28
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        //let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        center.add(request)
+        
+        
+    }
+    
     
     
     func makeView(){
@@ -77,6 +115,8 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        register()
+        schedule()
         SVProgressHUD.show(withStatus: "Loading...")
         SVProgressHUD.dismiss(withDelay: 3)
         makeView()
