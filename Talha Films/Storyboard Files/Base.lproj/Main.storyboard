@@ -133,7 +133,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </view>
                                         <connections>
-                                            <segue destination="kQG-kL-FfO" kind="show" id="Eyt-WX-8NP"/>
+                                            <segue destination="kQG-kL-FfO" kind="show" identifier="recommendedVideo" id="6Lz-OF-fqu"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>

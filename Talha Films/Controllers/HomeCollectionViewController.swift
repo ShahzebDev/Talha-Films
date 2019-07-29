@@ -30,6 +30,7 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
     let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
     let videoApiCall = "https://www.googleapis.com/youtube/v3/videos?"
+    let channelApiCall = ""
     //let channelId = "UCNZ-ZdWIRFM88Fxvlpug73A"
 
     override func viewDidLoad() {
@@ -90,12 +91,19 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     func fetchVideos() {
-        
         self.videos = [ThumbnailDetails]()
         self.channelIdArray.shuffle()
         
         for id in channelIdArray {
             Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"15", "key":apiKey]).responseJSON { (response) in
+                
+                
+                
+                DispatchQueue.main.async {
+                    self.fetchChannelThumbnail(ChannelID: id)
+                    //self.refreshControl.endRefreshing()
+                    //self.activityIndicator.stopAnimating()
+                }
                 
                 if let json = response.result.value as? [String: AnyObject] {
                     for items in json["items"] as! NSArray {
@@ -149,6 +157,35 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
             }
         }
         self.videos?.shuffle()
+    }
+    
+    func fetchChannelThumbnail(ChannelID id: String){
+        
+        let channel = ChannelDetails()
+        
+        Alamofire.request(channelApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":id, "key":apiKey]).responseJSON { (response) in
+            
+            print("api called")
+            
+            if let json = response.result.value as? [String: AnyObject] {
+                
+                for items in json["items"] as! NSArray {
+                    print("CHANNEL Items: \(items)")
+                    
+                    let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
+                    channel.channelTitle = title!["title"] as? String
+                    //print("Channel Title in table view: \(String(describing: channel.channelTitle))")
+                    
+                    let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
+                    let highResUrl = thumbnailUrl!["high"]?["url"] as? String
+                    print("Channel Image URL: \(String(describing: highResUrl))")
+                    channel.channelImageName = highResUrl
+                    
+                }
+            }
+        }
+        
+        //print("Image Name \(channel.channelImageName)")
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

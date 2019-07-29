@@ -19,6 +19,10 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     
     var recommendedDetails: [ThumbnailDetails]?
     
+    var selectedCell: ThumbnailDetails?
+    
+    var channelId: String?
+    
     private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
     let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
 
@@ -36,9 +40,9 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
         
         fetchVideos()
     }
+    
     func fetchVideos() {
-        
-        let channelId = videoDetails?.channelId!
+        channelId = videoDetails?.channelId!
         
         Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":channelId!, "maxResults":"10", "key":apiKey]).responseJSON { (response) in
             
@@ -49,18 +53,38 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                 for items in json["items"] as! NSArray {
                     // print("Items: \(items)")
                     
+                    let video = ThumbnailDetails()
+                    
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     //print("Title: \(String(describing: title))")
+                    
+                    let publishedDate = title!["publishedAt"] as? String
+                    if let index = publishedDate?.range(of: "T1") {
+                        let subString = publishedDate![..<index.lowerBound]
+                        video.uploadDate = "Published Date: \(String(subString))"
+                        print("Date: \(video.uploadDate)")
+                    }
                     
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
                     //print("URL: \(String(describing: thumbnailUrl))")
                     
+                    let contentDetails = (items as AnyObject)["contentDetails"] as? [String: AnyObject]
+                    //print("Content Details: \(contentDetails)")
+                    
+                    var videoId = contentDetails!["upload"]?["videoId"] as? String
+                    
+                    if videoId == nil {
+                        let resource = contentDetails!["playlistItem"]?["resourceId"] as? [String: AnyObject]
+                        videoId = resource!["videoId"] as? String ?? "nil"
+                    }
+                    
                     //let maxresUrl = thumbnailUrl!["maxres"]?["url"]
                     //print("RES URL: \(String(describing: maxresUrl))")
                     
-                    let video = ThumbnailDetails()
                     video.videoTitle = title!["title"] as? String
                     video.videoImageName = thumbnailUrl!["medium"]?["url"] as? String
+                    video.cellVideoId = videoId
+                    video.channelId = self.videoDetails?.channelId
                     
                     
                     //appending the videos
@@ -100,19 +124,27 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.selectedCell = recommendedDetails![indexPath.item]
+    
+        self.performSegue(withIdentifier: "recommendedVideo", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let segueDestination = segue.destination as? VideoCellVIewController
+        
+        segueDestination?.videoDetails = self.selectedCell
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         
         if let video = self.videoDetails {
-            
             let htmlString = "<html><body style='margin:0px;padding:0px;'><iframe id='playerId' type='text/html' width=100%% height=100%% src='http://www.youtube.com/embed/" + videoDetails!.cellVideoId! + "?enablejsapi=1&rel=0' frameborder='0'></iframe></body></html>"
             webView.loadHTMLString(htmlString, baseURL: nil)
-            
             
             self.videoTitle.text = video.videoTitle
             self.date.text = video.uploadDate
             self.viewCount.text = "Views: \(video.numberofViews ?? "0")"
-            
-            
         }
         
     }
