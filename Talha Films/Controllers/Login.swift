@@ -45,8 +45,8 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
             
             ValueLabel.isHidden = true
             let emailval = UserDefaults.standard.string(forKey: "email")
-            var label = UILabel(frame: CGRect(x: 30, y: 400, width: 200, height: 21))
-            var maillabel = UILabel(frame: CGRect(x: 110, y: 400, width: 200, height: 21))
+            let label = UILabel(frame: CGRect(x: 30, y: 400, width: 200, height: 21))
+            let maillabel = UILabel(frame: CGRect(x: 110, y: 400, width: 200, height: 21))
             //label.center = CGPoint(x: 160, y: 284)
             label.textAlignment = .left
             label.text = "Email:"
@@ -60,7 +60,7 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
             self.view.addSubview(maillabel)
         }
         else{
-            let ValueLabel: UILabel = {
+            let _: UILabel = {
                 let val = UILabel()
                 val.contentMode = .scaleAspectFit
                 val.clipsToBounds = true
@@ -114,7 +114,7 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
         }
         else
         {
-            let controller = UIAlertController(title: "No Internet Detected", message: "This app requires an Internet connection", preferredStyle: .alert)
+            let controller = UIAlertController(title: "Internet Connection Required", message: "Please connect to the WiFi or Cellular Network.", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             

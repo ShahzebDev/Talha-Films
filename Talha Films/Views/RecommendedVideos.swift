@@ -42,6 +42,7 @@ class RecommendedVideo: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.clipsToBounds = true
         label.numberOfLines = 5
+        label.font = UIFont.systemFont(ofSize: 13)
         //label.contentMode = .left
         return label
     }()
@@ -55,10 +56,12 @@ class RecommendedVideo: UICollectionViewCell {
         addSubview(thumbnailImageView)
         addSubview(titleLabel)
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v0(160)]", options: .directionMask, metrics: nil, views: ["v0": thumbnailImageView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v0(160)]-1-[v1]|", options: .directionMask, metrics: nil, views: ["v0": thumbnailImageView, "v1": titleLabel]))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v0]|", options: .directionMask, metrics: nil, views: ["v0": thumbnailImageView])) //video thumbnail preview
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-1-[v0]", options: .directionMask, metrics: nil, views: ["v0": titleLabel]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-3-[v0]", options: .directionMask, metrics: nil, views: ["v0": titleLabel]))
+        
+        //addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-1-[v0]|", options: .directionMask, metrics: nil, views: ["v0": titleLabel]))
         
         addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .left, relatedBy: .equal, toItem: thumbnailImageView, attribute: .right, multiplier: 1, constant: 8))
     }

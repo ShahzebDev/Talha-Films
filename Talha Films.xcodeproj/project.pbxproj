@@ -54,7 +54,7 @@
 		8D21CF67903CDBDD6B72B2E6 /* Pods-Talha Films.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Talha Films.debug.xcconfig"; path = "Target Support Files/Pods-Talha Films/Pods-Talha Films.debug.xcconfig"; sourceTree = "<group>"; };
 		C70A16D79BD52A35EBE088E4 /* Pods_Talha_Films.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Talha_Films.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC0FD35C22D8B67500F7043D /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
-		FC0FD35E22D8BFBF00F7043D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		FC0FD35E22D8BFBF00F7043D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Talha Films/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FC5FB18322E31F3200BA488C /* CheckingNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckingNetwork.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -92,17 +92,14 @@
 		037C40A22297284900BD35DE /* Talha Films */ = {
 			isa = PBXGroup;
 			children = (
+				03B21D0222EEF98D008579C5 /* Storyboard Files */,
 				037C40C52297338200BD35DE /* Views */,
 				037C40BE229732F300BD35DE /* Model */,
 				037C40B522972BC700BD35DE /* Controllers */,
 				037C40A32297284900BD35DE /* AppDelegate.swift */,
-				037C40A72297284900BD35DE /* Main.storyboard */,
-				037C40AA2297284A00BD35DE /* Assets.xcassets */,
-				037C40AC2297284A00BD35DE /* LaunchScreen.storyboard */,
 				037C40AF2297284A00BD35DE /* Info.plist */,
 				FC0FD35E22D8BFBF00F7043D /* GoogleService-Info.plist */,
-				FC0FD35C22D8B67500F7043D /* Login.swift */,
-				FC5FB18322E31F3200BA488C /* CheckingNetwork.swift */,
+				037C40AA2297284A00BD35DE /* Assets.xcassets */,
 			);
 			path = "Talha Films";
 			sourceTree = "<group>";
@@ -115,6 +112,8 @@
 				037C40B822972C5800BD35DE /* VideoCellVIewController.swift */,
 				037C40CA2299C75300BD35DE /* SegmentViewController.swift */,
 				037C4112229EAD4700BD35DE /* PlaylistVideosCollectionViewController.swift */,
+				FC0FD35C22D8B67500F7043D /* Login.swift */,
+				FC5FB18322E31F3200BA488C /* CheckingNetwork.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -138,6 +137,15 @@
 				037C4114229EAD8000BD35DE /* PlaylistVideosUI.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		03B21D0222EEF98D008579C5 /* Storyboard Files */ = {
+			isa = PBXGroup;
+			children = (
+				037C40A72297284900BD35DE /* Main.storyboard */,
+				037C40AC2297284A00BD35DE /* LaunchScreen.storyboard */,
+			);
+			path = "Storyboard Files";
 			sourceTree = "<group>";
 		};
 		3C3F78FCFAF841F871AF32CE /* Frameworks */ = {

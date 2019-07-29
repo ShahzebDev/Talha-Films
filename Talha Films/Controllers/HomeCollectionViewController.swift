@@ -13,6 +13,9 @@ import SkeletonView
 
 class HomeCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
+    let refreshControl = UIRefreshControl()
+    let activityIndicator = UIActivityIndicatorView()
+    
     var shouldAnimate = true //to animate the cell
     var fetchingMore = false
     
@@ -38,9 +41,35 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         
         //registered cell with CellUIDetails to show the views
         collectionView.register(DetailedCell.self, forCellWithReuseIdentifier: "cell")
+        
+        //method to refreshing upon pulling down the view.
+        pullToRefresh()
     
         fetchVideos()
     }
+    
+    func pullToRefresh() {
+        if #available(iOS 10.0, *) {
+            collectionView.refreshControl = refreshControl
+        } else {
+            collectionView.addSubview(refreshControl)
+        }
+        
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        
+        refreshControl.addTarget(self, action: #selector(refreshTheFeed(_:)), for: .valueChanged)
+        print("method called")
+    }
+    
+    @objc func refreshTheFeed(_ sender: Any) {
+        videos?.shuffle()
+        collectionView.reloadData()
+        self.refreshControl.endRefreshing()
+        self.activityIndicator.stopAnimating()
+        
+        print("It got shuffled")
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         if Reachability.isConnectedToNetwork() == true
         {
@@ -106,11 +135,15 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                         self.videos?.append(video)
                         DispatchQueue.main.async {
                             self.collectionView.reloadData()
+                            //self.refreshControl.endRefreshing()
+                            //self.activityIndicator.stopAnimating()
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0){
                         self.shouldAnimate = false
                         self.collectionView.reloadData()
+                        //self.refreshControl.endRefreshing()
+                        //self.activityIndicator.stopAnimating()
                     }
                 }
             }
@@ -160,30 +193,6 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
             }
         }
         self.performSegue(withIdentifier: "goToDetails", sender: self)
-    }
-    
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentheight = scrollView.contentSize.height
-        //print("OffSetY: \(offsetY), ContentHeigh: \(contentheight)")
-        
-        if offsetY > contentheight - scrollView.frame.height {
-            if !fetchingMore {
-               // fetchMore()
-            }
-        }
-        
-    }
-    
-    func fetchMore() {
-        fetchingMore = true
-        print("Fetch More")
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            print("Fetching More")
-            self.fetchVideos()
-            self.collectionView.reloadData()
-        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
