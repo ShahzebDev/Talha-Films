@@ -62,7 +62,7 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                     if let index = publishedDate?.range(of: "T1") {
                         let subString = publishedDate![..<index.lowerBound]
                         video.uploadDate = "Published Date: \(String(subString))"
-                        print("Date: \(video.uploadDate)")
+                        //print("Date: \(video.uploadDate)")
                     }
                     
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]

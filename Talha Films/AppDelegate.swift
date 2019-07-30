@@ -59,20 +59,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
             print("\(error.localizedDescription)")
         } else {
             // Perform any operations on signed in user here.
-            let userId = user.userID                  // For client-side use only!
-            let idToken = user.authentication.idToken // Safe to send to the server
-            let fullName = user.profile.name
-            let givenName = user.profile.givenName
-            let familyName = user.profile.familyName
+            _ = user.userID                  // For client-side use only!
+            _ = user.authentication.idToken // Safe to send to the server
+            _ = user.profile.name
+            _ = user.profile.givenName
+            _ = user.profile.familyName
             let email = user.profile.email
             // ...
-            
-            print(userId)
-            print(idToken)
-            print(fullName)
-            print(givenName)
-            print(familyName)
-            print(email)
+//
+//            print(userId)
+//            print(idToken)
+//            print(fullName)
+//            print(givenName)
+//            print(familyName)
+//            print(email)
             UserDefaults.standard.set(email, forKey: "email")
             let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "navStory")
             let nvc = UINavigationController(rootViewController: vc)

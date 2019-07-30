@@ -161,10 +161,10 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
         //Get the user email and save into firebase.
         Auth.auth().signIn(with: credential) { (user, error) in
             if error != nil{
-                print("Error",error?.localizedDescription)
+                //print("Error",error?.localizedDescription)
                 return
             }
-            print("sucessfully logged in with user",user)
+            //print("sucessfully logged in with user",user)
             //Changing views from current VC back to NavVC.
             let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "navStory")
             let nvc = UINavigationController(rootViewController: vc)
@@ -200,10 +200,10 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
         
         GraphRequest(graphPath: "/me", parameters: ["fields": "id, name,email"]).start { (connection, result, error) in
             if error != nil{
-                print(error)
+                print(error?.localizedDescription ?? "nil")
                 return
             }
-            print(result)
+            print(result.debugDescription)
         }
     }
     

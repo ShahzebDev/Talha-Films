@@ -16,6 +16,10 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     let refreshControl = UIRefreshControl()
     let activityIndicator = UIActivityIndicatorView()
     
+    var shouldShowSearchResults = false
+    let searchBar = UISearchController(searchResultsController: nil)
+    var searchedVideo = [ThumbnailDetails]()
+    
     var shouldAnimate = true //to animate the cell
     var fetchingMore = false
     
@@ -25,12 +29,14 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     //to copy selected cell object to this variable
     var selectedCell: ThumbnailDetails?
     
+    var imageStr: String?
+    
     var channelIdArray = ["UCNZ-ZdWIRFM88Fxvlpug73A","UC3__mxJ0T3dXisOp3OP49DA","UCt5pwA1JdEMaQ7XX_FldPzA","UC75zRBEe-jA6jFGDliL_-NQ","UC5ZAU-hc5NOeuXUcb4gyqcQ"]
     
     private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
     let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
     let videoApiCall = "https://www.googleapis.com/youtube/v3/videos?"
-    let channelApiCall = ""
+    let channelApiCall = "https://www.googleapis.com/youtube/v3/channels?"
     //let channelId = "UCNZ-ZdWIRFM88Fxvlpug73A"
 
     override func viewDidLoad() {
@@ -43,10 +49,39 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         //registered cell with CellUIDetails to show the views
         collectionView.register(DetailedCell.self, forCellWithReuseIdentifier: "cell")
         
+        searchBar.searchResultsUpdater = self
+        searchBar.obscuresBackgroundDuringPresentation = true
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchBar.searchBar.placeholder = "Search Videos"
+        navigationItem.searchController = searchBar
+        searchBar.searchBar.sizeToFit()
+        definesPresentationContext = true
+        
         //method to refreshing upon pulling down the view.
         pullToRefresh()
     
         fetchVideos()
+    }
+    
+    func isFiltering() -> Bool {
+        return searchBar.isActive && !searchBarIsEmpty()
+    }
+    
+    func searchBarIsEmpty() -> Bool {
+        return searchBar.searchBar.text?.isEmpty ?? true
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        shouldShowSearchResults = false
+        collectionView.reloadData()
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        searchedVideo = videos!.filter({( video : ThumbnailDetails) -> Bool in
+            return video.videoTitle?.lowercased().contains(searchText.lowercased()) ?? false
+        })
+        
+        self.collectionView.reloadData()
     }
     
     func pullToRefresh() {
@@ -59,7 +94,6 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         
         refreshControl.addTarget(self, action: #selector(refreshTheFeed(_:)), for: .valueChanged)
-        print("method called")
     }
     
     @objc func refreshTheFeed(_ sender: Any) {
@@ -97,12 +131,8 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         for id in channelIdArray {
             Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"15", "key":apiKey]).responseJSON { (response) in
                 
-                
-                
                 DispatchQueue.main.async {
                     self.fetchChannelThumbnail(ChannelID: id)
-                    //self.refreshControl.endRefreshing()
-                    //self.activityIndicator.stopAnimating()
                 }
                 
                 if let json = response.result.value as? [String: AnyObject] {
@@ -159,18 +189,15 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         self.videos?.shuffle()
     }
     
-    func fetchChannelThumbnail(ChannelID id: String){
+    func fetchChannelThumbnail(ChannelID id: String)  {
         
         let channel = ChannelDetails()
-        
+        var imageSTR: String?
         Alamofire.request(channelApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":id, "key":apiKey]).responseJSON { (response) in
             
-            print("api called")
-            
             if let json = response.result.value as? [String: AnyObject] {
-                
                 for items in json["items"] as! NSArray {
-                    print("CHANNEL Items: \(items)")
+                   //print("CHANNEL Items: \(items)")
                     
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     channel.channelTitle = title!["title"] as? String
@@ -178,14 +205,14 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                     
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
                     let highResUrl = thumbnailUrl!["high"]?["url"] as? String
-                    print("Channel Image URL: \(String(describing: highResUrl))")
+                    //print("Channel Image URL: \(String(describing: highResUrl))")
                     channel.channelImageName = highResUrl
-                    
+                    self.imageStr = highResUrl
+                    print("\(highResUrl)")
                 }
             }
         }
-        
-        //print("Image Name \(channel.channelImageName)")
+        print(imageStr)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -194,7 +221,12 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return videos?.count ?? 0
+        if isFiltering() {
+            return searchedVideo.count
+        } else {
+            return videos?.count ?? 0
+        }
+        
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -209,7 +241,14 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
             cell.hideSkeleton()
         }
         
-        return cell
+        
+        if isFiltering() {
+            cell.video = searchedVideo[indexPath.item]
+            return cell
+        } else {
+            cell.video = videos![indexPath.item]
+            return cell
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
