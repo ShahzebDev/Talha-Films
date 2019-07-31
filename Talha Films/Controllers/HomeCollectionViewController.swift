@@ -33,7 +33,10 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     
     var channelIdArray = ["UCNZ-ZdWIRFM88Fxvlpug73A","UC3__mxJ0T3dXisOp3OP49DA","UCt5pwA1JdEMaQ7XX_FldPzA","UC75zRBEe-jA6jFGDliL_-NQ","UC5ZAU-hc5NOeuXUcb4gyqcQ"]
     
-    private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
+    private let activityApiKey = "AIzaSyCVLgb5208Vqgk-TCBS0LpG8gtDAENJw9c"
+    private let channelImageApiKey = "AIzaSyDECDHHLw6wtdVBIa2mTzTn9ziUJ_DhunM"
+    private let videoPlaybackApiKey = "AIzaSyBt-N7YycJxawVq-SEKjxjYBmrGI23F7qc"
+    
     let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
     let videoApiCall = "https://www.googleapis.com/youtube/v3/videos?"
     let channelApiCall = "https://www.googleapis.com/youtube/v3/channels?"
@@ -129,17 +132,33 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         self.channelIdArray.shuffle()
         
         for id in channelIdArray {
-            Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"15", "key":apiKey]).responseJSON { (response) in
-                
-                DispatchQueue.main.async {
-                    self.fetchChannelThumbnail(ChannelID: id)
-                }
+            Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"10", "key":activityApiKey]).responseJSON { (response) in
                 
                 if let json = response.result.value as? [String: AnyObject] {
                     for items in json["items"] as! NSArray {
                         //print("Items: \(items)")
                         
                         let video = ThumbnailDetails()
+                        
+                        Alamofire.request(self.channelApiCall, method: .get, parameters: ["part":"snippet", "id":id, "key":self.channelImageApiKey]).responseJSON { (response) in
+                            
+                            if let json = response.result.value as? [String: AnyObject] {
+                                for items in json["items"] as! NSArray {
+                                    //print("CHANNEL Items: \(items)")
+                                    
+                                    let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
+                                    //channel.channelTitle = title!["title"] as? String
+                                    //print("Channel Title in table view: \(String(describing: channel.channelTitle))")
+                                    
+                                    let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
+                                    let highResUrl = thumbnailUrl!["high"]?["url"] as? String
+                                    //print("Channel Image URL: \(String(describing: highResUrl))")
+                                    video.channelImageName = highResUrl
+                                    //self.imageStr = highResUrl
+                                    //print("\(highResUrl)")
+                                }
+                            }
+                        }
                         
                         let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                         //print("Title: \(String(describing: title))")
@@ -189,32 +208,6 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         self.videos?.shuffle()
     }
     
-    func fetchChannelThumbnail(ChannelID id: String)  {
-        
-        let channel = ChannelDetails()
-        var imageSTR: String?
-        Alamofire.request(channelApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":id, "key":apiKey]).responseJSON { (response) in
-            
-            if let json = response.result.value as? [String: AnyObject] {
-                for items in json["items"] as! NSArray {
-                   //print("CHANNEL Items: \(items)")
-                    
-                    let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
-                    channel.channelTitle = title!["title"] as? String
-                    //print("Channel Title in table view: \(String(describing: channel.channelTitle))")
-                    
-                    let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
-                    let highResUrl = thumbnailUrl!["high"]?["url"] as? String
-                    //print("Channel Image URL: \(String(describing: highResUrl))")
-                    channel.channelImageName = highResUrl
-                    self.imageStr = highResUrl
-                    print("\(highResUrl)")
-                }
-            }
-        }
-        print(imageStr)
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let height = (view.frame.width - 16 - 16) * 9 / 16
         return CGSize(width: UIScreen.main.bounds.width, height: height + 16 + 68)
@@ -254,7 +247,7 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.selectedCell = videos![indexPath.item]
         
-        Alamofire.request(videoApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":selectedCell!.cellVideoId!, "key":apiKey]).responseJSON { (response) in
+        Alamofire.request(videoApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":selectedCell!.cellVideoId!, "key":videoPlaybackApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 

@@ -18,7 +18,6 @@ import FirebaseAuth
 class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
     @IBOutlet weak var label: UILabel!
     
-    
     let logoImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFit
@@ -37,7 +36,7 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
         return val
     }()
     
-
+    
     
     
     func createEmailLabel(){
@@ -86,8 +85,8 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       createEmailLabel()
-       configration()
+        createEmailLabel()
+        configration()
         
         navigationItem.title = "Profile"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -123,23 +122,23 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
             
             present(controller, animated: true, completion: nil)
         }
-
+        
     }
     
     //Will use if it is required :/
-//    @objc func SignOut (_ sender: UIButton){
-//        GIDSignIn.sharedInstance()?.signOut()
-//    }
+    //    @objc func SignOut (_ sender: UIButton){
+    //        GIDSignIn.sharedInstance()?.signOut()
+    //    }
     
     func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
         print("User is sucessfully logout")
         //Changing views from current VC back to LoginVC.
-            UserDefaults.standard.removeObject(forKey: "email")
-            let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "UserProfile")
-            let nvc = UINavigationController(rootViewController: vc)
-            let share = UIApplication.shared.delegate as? AppDelegate
-            share?.window?.rootViewController = nvc
-            share?.window?.makeKeyAndVisible()
+        UserDefaults.standard.removeObject(forKey: "email")
+        let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "UserProfile")
+        let nvc = UINavigationController(rootViewController: vc)
+        let share = UIApplication.shared.delegate as? AppDelegate
+        share?.window?.rootViewController = nvc
+        share?.window?.makeKeyAndVisible()
     }
     
     //Method:- Facebook Button Functionality
@@ -191,10 +190,10 @@ class Login: UIViewController,LoginButtonDelegate,GIDSignInUIDelegate{
                     guard let email = snapshot.value as? String else{return}
                     print(email)
                     UserDefaults.standard.set(email, forKey: "email")
-//                    self.label.text = email
+                    //                    self.label.text = email
                 }
             })
-         
+            
         }
         //This piece of code will grab the user email,name,and unqiue id from facebook.
         

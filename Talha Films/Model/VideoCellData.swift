@@ -17,6 +17,7 @@ class ThumbnailDetails: NSObject { //this is generic cell model for every video 
     var uploadDate: String?
     var cellVideoId: String?
     var channelId: String?
+    var channelImageName: String?
     var videoCount = 0
     
     var channel: ChannelDetails?
@@ -29,6 +30,7 @@ class PlaylistItems: NSObject { //this is generic cell for every playlist item i
     var playlistTitle: String?
     var playlistId: String?
     var playlistItemCount: String?
+    var playlistChannelId: String?
     
 }
 

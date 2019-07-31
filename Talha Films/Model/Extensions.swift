@@ -31,12 +31,10 @@ extension UIImageView {
             
             //dispatching the thread to background
             DispatchQueue.main.async {
-                
                 let imageToCache = UIImage(data: data!)
                 imageCache.setObject(imageToCache!, forKey: urlString as AnyObject)
                 self.image = UIImage(data: data!)
             }
-            
             }.resume()
     }
 }
@@ -69,7 +67,7 @@ extension UIView {
         if height != 0 {
             heightAnchor.constraint(equalToConstant: height).isActive = true
         }
-}
+    }
     func textContainerView(view: UIView, _ image: UIImage, _ textField: UILabel) -> UIView {
         view.backgroundColor = .clear
         
@@ -102,5 +100,14 @@ extension UITextField {
         tf.isSecureTextEntry = isSecureTextEntry
         tf.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
         return tf
+    }
 }
+
+extension HomeCollectionViewController: UISearchResultsUpdating {
+    
+    //thhis function conforms the protocol UISearchResultsUpdating
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
+    
 }

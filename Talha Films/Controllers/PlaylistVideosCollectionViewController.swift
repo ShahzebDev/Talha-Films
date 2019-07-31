@@ -13,33 +13,38 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
     
     var playlistVideos: [ThumbnailDetails]?
     var playlistId: String?
+    var playlistChannelId: String?
     
     var selectedCell: ThumbnailDetails?
-
-    private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
-    let playlistItemsApiCall = "https://www.googleapis.com/youtube/v3/playlistItems"
-    let videoApiCall = "https://www.googleapis.com/youtube/v3/videos?"
+    
+    private let playlistVideoApiKey = "AIzaSyB5V3VCOAOXmQgN4hbrNdqydo-JxTkeJvA"
+    
+    let playlistItemsApiUrl = "https://www.googleapis.com/youtube/v3/playlistItems"
+    let videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?"
+    let youtubeChannelURL = "https://www.googleapis.com/youtube/v3/channels?"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        print("In playlist view controller")
+        
         navigationItem.title = "Playlist Videos"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationItem.largeTitleDisplayMode = .always
-
+        
         // Register cell classes
         self.collectionView.register(PlaylistVideosUI.self, forCellWithReuseIdentifier: "cell")
-
+        
         fetchVideos()
     }
     
     func fetchVideos(){
         self.playlistVideos = [ThumbnailDetails]()
-        Alamofire.request(playlistItemsApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "maxResults":"30" ,"playlistId":playlistId ?? "nil", "key":apiKey]).responseJSON { (response) in
+        Alamofire.request(playlistItemsApiUrl, method: .get, parameters: ["part":"snippet,contentDetails", "maxResults":"30" ,"playlistId":playlistId ?? "nil", "key":playlistVideoApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 for items in json["items"] as! NSArray {
-                    print("Items of Video ID: \(items)")
+                    //print("Items of Video ID: \(items)")
                     let video = ThumbnailDetails()
                     
                     
@@ -72,44 +77,40 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
                         //print("Video: \(video)")
                     }
                 }
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                    }
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
             }
             
         }
-
+        
     }
-
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let height = (view.frame.width - 16 - 16) * 9 / 16
         return CGSize(width: UIScreen.main.bounds.width, height: height + 16 + 68)
         
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
         return playlistVideos?.count ?? 0
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PlaylistVideosUI
-    
+        
         // Configure the cell
         cell.videos = playlistVideos![indexPath.item]
-    
+        
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.selectedCell = playlistVideos![indexPath.item]
         
-        Alamofire.request(videoApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":selectedCell!.cellVideoId!, "key":apiKey]).responseJSON { (response) in
-            
-            //print("Request: \(String(describing: response.request))")   // original url request
-            //print("Response: \(String(describing: response.response))") // http url response
-            //print("Result: \(response.result)")
+        Alamofire.request(videoApiUrl, method: .get, parameters: ["part":"statistics", "id":selectedCell!.cellVideoId!, "key":playlistVideoApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 
@@ -134,5 +135,4 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
         segueDestination?.videoDetails = self.selectedCell
         //segueDestination?.channelId = self.channelId
     }
-
 }

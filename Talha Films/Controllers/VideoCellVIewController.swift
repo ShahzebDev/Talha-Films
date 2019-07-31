@@ -23,8 +23,10 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     
     var channelId: String?
     
-    private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
+    private let recommendedApiKey = "AIzaSyD2QxKDoU6BTPWBqjdBFQ5PgLoPEEijINk"
     let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
+    
+    var channelImageStr: String?
 
     @IBOutlet var date: UILabel!
     @IBOutlet var imageView: UIImageView!
@@ -36,6 +38,14 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        channelImageStr = videoDetails?.channelImageName
+        
+        imageView.layer.borderWidth = 1
+        imageView.layer.masksToBounds = false
+        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.cornerRadius = imageView.frame.height/2
+        imageView.clipsToBounds = true
+        
         collectionView?.register(RecommendedVideo.self, forCellWithReuseIdentifier: "cell")
         
         fetchVideos()
@@ -44,7 +54,7 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     func fetchVideos() {
         channelId = videoDetails?.channelId!
         
-        Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":channelId!, "maxResults":"10", "key":apiKey]).responseJSON { (response) in
+        Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":channelId!, "maxResults":"10", "key":recommendedApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 
@@ -54,6 +64,8 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                     // print("Items: \(items)")
                     
                     let video = ThumbnailDetails()
+                    
+                    
                     
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     //print("Title: \(String(describing: title))")
@@ -85,6 +97,7 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                     video.videoImageName = thumbnailUrl!["medium"]?["url"] as? String
                     video.cellVideoId = videoId
                     video.channelId = self.videoDetails?.channelId
+                    video.channelImageName = self.channelImageStr
                     
                     
                     //appending the videos
@@ -134,6 +147,7 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
         let segueDestination = segue.destination as? VideoCellVIewController
         
         segueDestination?.videoDetails = self.selectedCell
+        //segueDestination?.channelImageStr = channelImageStr
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -141,7 +155,8 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
         if let video = self.videoDetails {
             let htmlString = "<html><body style='margin:0px;padding:0px;'><iframe id='playerId' type='text/html' width=100%% height=100%% src='http://www.youtube.com/embed/" + videoDetails!.cellVideoId! + "?enablejsapi=1&rel=0' frameborder='0'></iframe></body></html>"
             webView.loadHTMLString(htmlString, baseURL: nil)
-            
+            self.imageView.loadImageUsingURLString(urlString: channelImageStr ?? "nil")
+            //self.imageView.image = #imageLiteral(resourceName: "user-1")
             self.videoTitle.text = video.videoTitle
             self.date.text = video.uploadDate
             self.viewCount.text = "Views: \(video.numberofViews ?? "0")"

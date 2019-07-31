@@ -18,7 +18,8 @@ class ChannelListControllerTableViewController: UITableViewController {
     var channels: [ChannelDetails] = []
     var selectedChannel: ChannelDetails? //to copy selected cell object to this var
     
-    private let apiKey = "AIzaSyB9lzfb9eiZJCYC8raCo6Omj91gn-mZsN0"
+    private let channelRetrieveApiKey = "AIzaSyCXC5uOC15BWk1WfPO0yBOBRjWcUwp0QGU"
+    
     let channelApiCall = "https://www.googleapis.com/youtube/v3/channels?"
     
     let channelIdArray = ["UCNZ-ZdWIRFM88Fxvlpug73A","UC3__mxJ0T3dXisOp3OP49DA","UChnKAuF_9R5_6RKzrBaxTMA","UCt5pwA1JdEMaQ7XX_FldPzA","UC75zRBEe-jA6jFGDliL_-NQ","UC5ZAU-hc5NOeuXUcb4gyqcQ"]
@@ -60,7 +61,7 @@ class ChannelListControllerTableViewController: UITableViewController {
     func fetchChannels(){
         
         for id in channelIdArray {
-            Alamofire.request(channelApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":id, "key":apiKey]).responseJSON { (response) in
+            Alamofire.request(channelApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":id, "key":channelRetrieveApiKey]).responseJSON { (response) in
                 
                 if let json = response.result.value as? [String: AnyObject] {
                     

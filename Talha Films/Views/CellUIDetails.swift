@@ -23,7 +23,7 @@ class DetailedCell: UICollectionViewCell {
     
     //loading image from URL for thumbnail
     func loadChannelProfileImageFromURL() { //loads channel profile image from URL.
-        if let profileImageURL = video?.channel?.channelImageName {
+        if let profileImageURL = video?.channelImageName {
             userProfileImage.loadImageUsingURLString(urlString: profileImageURL)
         }
     }
@@ -123,15 +123,6 @@ class DetailedCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-}
-
-extension HomeCollectionViewController: UISearchResultsUpdating {
-    
-    //thhis function conforms the protocol UISearchResultsUpdating
-    func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchText(searchController.searchBar.text!)
     }
     
 }
