@@ -24,7 +24,8 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     var channelId: String?
     
     private let recommendedApiKey = "AIzaSyD2QxKDoU6BTPWBqjdBFQ5PgLoPEEijINk"
-    let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
+    let youtubeApiUrl = "https://www.googleapis.com/youtube/v3/activities?"
+    
     
     var channelImageStr: String?
 
@@ -54,7 +55,7 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
     func fetchVideos() {
         channelId = videoDetails?.channelId!
         
-        Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":channelId!, "maxResults":"10", "key":recommendedApiKey]).responseJSON { (response) in
+        Alamofire.request(youtubeApiUrl, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":channelId!, "maxResults":"10", "key":recommendedApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 

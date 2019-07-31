@@ -21,6 +21,8 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
     var selectedPlayListCell: PlaylistItems?
     var playlistVideos: [ThumbnailDetails]?
     
+    var playlistChannelImageName: String?
+    
     var cellVideoId: String?
     var playlistId: String?
     var channelId: String?
@@ -30,11 +32,13 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     private let fetchPlaylistApiKey = "AIzaSyAaYGTPcXBNsgbgkWgI-nPR4Rtgoosdtzw"
     private let fetchVideosApiKey = "AIzaSyClXj6aoWH79g4V0LY8912MO1oF-7pUWXc"
+    private let channelImageApiKey = "AIzaSyBt-N7YycJxawVq-SEKjxjYBmrGI23F7qc" //it is videoplayback key for channel usage
     
     let videoApiUrl = "https://www.googleapis.com/youtube/v3/activities?"
     let playlistApiUrl = "https://www.googleapis.com/youtube/v3/playlists?"
     let videoCellApiUrl = "https://www.googleapis.com/youtube/v3/videos?"
     let playlistItemsApiUrl = "https://www.googleapis.com/youtube/v3/playlistItems"
+    let channelApiUrl = "https://www.googleapis.com/youtube/v3/channels?"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,8 +46,6 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.register(ChannelVideosDetails.self, forCellWithReuseIdentifier: "cellDetails")
         
         fetchVideos()
-        
-        print("In segment view controller")
         
         switch (segmentControl.selectedSegmentIndex) {
         case 1:
@@ -64,7 +66,7 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                 self.playlists = [PlaylistItems]()
                 
                 for items in json["items"] as! NSArray {
-                    print("Items: \(items)")
+                    //print("Items: \(items)")
                     
                     
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
@@ -83,10 +85,11 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                     //print("RES URL: \(String(describing: maxresUrl))")
                     
                     let playlist = PlaylistItems()
-                    playlist.playlistTitle = "Playlist Name: \(title!["title"] as? String ?? "NIL")"
+                    playlist.playlistTitle = "Playlist Name: \(title!["title"] as? String ?? "nil")"
                     //self.cellVideoId = videoId
                     //playlist.playlistItemCount = "Playlist Videos: \(playlistVideoCount as? String ?? "NIL")"
                     playlist.playlistId = playlistId
+                    playlist.playlistChannelId = self.channelId!
                     playlist.playlistImage = thumbnailUrl!["high"]?["url"] as? String
                     
                     
@@ -115,6 +118,29 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                 for items in json["items"] as! NSArray {
                     //print("Items: \(items)")
                     
+                    let video = ThumbnailDetails()
+                    
+                    Alamofire.request(self.channelApiUrl, method: .get, parameters: ["part":"snippet", "id":self.channelId!, "key":self.channelImageApiKey]).responseJSON { (response) in
+                        
+                        if let json = response.result.value as? [String: AnyObject] {
+                            for items in json["items"] as! NSArray {
+                                //print("CHANNEL Items: \(items)")
+                                
+                                let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
+                                //channel.channelTitle = title!["title"] as? String
+                                //print("Channel Title in table view: \(String(describing: channel.channelTitle))")
+                                
+                                let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
+                                let highResUrl = thumbnailUrl!["high"]?["url"] as? String
+                                //print("Channel Image URL: \(String(describing: highResUrl))")
+                                video.channelImageName = highResUrl
+                                self.playlistChannelImageName = highResUrl
+                                //self.imageStr = highResUrl
+                                //print("\(highResUrl)")
+                            }
+                        }
+                    }
+                    
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     //print("Title: \(String(describing: title))")
                     
@@ -136,7 +162,7 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                     //let maxresUrl = thumbnailUrl!["maxres"]?["url"]
                     //print("RES URL: \(String(describing: maxresUrl))")
                     
-                    let video = ThumbnailDetails()
+                    
                     video.videoTitle = title!["title"] as? String
                     self.cellVideoId = videoId
                     video.cellVideoId = videoId
@@ -186,16 +212,16 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                         self.selectedVideoCell!.numberofViews = viewCount
                     }
                 }
-                
             }
             self.performSegue(withIdentifier: "goToVideo", sender: self)
             
         case 1:
             self.selectedPlayListCell = playlists![indexPath.item]
-            playlistId = selectedPlayListCell?.playlistId
             
             if let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "StoryboardID") as? PlaylistVideosCollectionViewController {
                 viewController.playlistId = selectedPlayListCell?.playlistId
+                viewController.playlistChannelId = selectedPlayListCell?.playlistChannelId
+                viewController.playlistChannelImageName = self.playlistChannelImageName
                 navigationController?.pushViewController(viewController, animated: true)
             }
         default:

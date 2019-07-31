@@ -43,7 +43,7 @@ class RecommendedVideo: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.clipsToBounds = true
         label.numberOfLines = 5
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 14)
         //label.contentMode = .left
         return label
     }()
@@ -53,7 +53,7 @@ class RecommendedVideo: UICollectionViewCell {
         label.text = "Date"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = UIFont.systemFont(ofSize: 12)
         return label
     }()
     
@@ -73,8 +73,6 @@ class RecommendedVideo: UICollectionViewCell {
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-3-[v0]", options: .directionMask, metrics: nil, views: ["v0": titleLabel]))
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[v0]-3-|", options: .directionMask, metrics: nil, views: ["v0": date]))
-        
-        //addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-1-[v0]|", options: .directionMask, metrics: nil, views: ["v0": titleLabel]))
         
         addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .left, relatedBy: .equal, toItem: thumbnailImageView, attribute: .right, multiplier: 1, constant: 8))
         addConstraint(NSLayoutConstraint(item: date, attribute: .left, relatedBy: .equal, toItem: thumbnailImageView, attribute: .right, multiplier: 1.0, constant: 1))

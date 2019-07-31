@@ -37,9 +37,9 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     private let channelImageApiKey = "AIzaSyDECDHHLw6wtdVBIa2mTzTn9ziUJ_DhunM"
     private let videoPlaybackApiKey = "AIzaSyBt-N7YycJxawVq-SEKjxjYBmrGI23F7qc"
     
-    let youtubeApiCall = "https://www.googleapis.com/youtube/v3/activities?"
-    let videoApiCall = "https://www.googleapis.com/youtube/v3/videos?"
-    let channelApiCall = "https://www.googleapis.com/youtube/v3/channels?"
+    let youtubeApiUrl = "https://www.googleapis.com/youtube/v3/activities?"
+    let videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?"
+    let channelApiUrl = "https://www.googleapis.com/youtube/v3/channels?"
     //let channelId = "UCNZ-ZdWIRFM88Fxvlpug73A"
 
     override func viewDidLoad() {
@@ -52,6 +52,15 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         //registered cell with CellUIDetails to show the views
         collectionView.register(DetailedCell.self, forCellWithReuseIdentifier: "cell")
         
+        //method to refreshing upon pulling down the view.
+        pullToRefresh()
+    
+        showSearchBar()
+        
+        fetchVideos()
+    }
+    
+    func showSearchBar(){
         searchBar.searchResultsUpdater = self
         searchBar.obscuresBackgroundDuringPresentation = true
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -59,11 +68,6 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         navigationItem.searchController = searchBar
         searchBar.searchBar.sizeToFit()
         definesPresentationContext = true
-        
-        //method to refreshing upon pulling down the view.
-        pullToRefresh()
-    
-        fetchVideos()
     }
     
     func isFiltering() -> Bool {
@@ -132,7 +136,7 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
         self.channelIdArray.shuffle()
         
         for id in channelIdArray {
-            Alamofire.request(youtubeApiCall, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"10", "key":activityApiKey]).responseJSON { (response) in
+            Alamofire.request(youtubeApiUrl, method: .get, parameters: ["part":"snippet,contentDetails", "channelId":id, "maxResults":"10", "key":activityApiKey]).responseJSON { (response) in
                 
                 if let json = response.result.value as? [String: AnyObject] {
                     for items in json["items"] as! NSArray {
@@ -140,7 +144,7 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                         
                         let video = ThumbnailDetails()
                         
-                        Alamofire.request(self.channelApiCall, method: .get, parameters: ["part":"snippet", "id":id, "key":self.channelImageApiKey]).responseJSON { (response) in
+                        Alamofire.request(self.channelApiUrl, method: .get, parameters: ["part":"snippet", "id":id, "key":self.channelImageApiKey]).responseJSON { (response) in
                             
                             if let json = response.result.value as? [String: AnyObject] {
                                 for items in json["items"] as! NSArray {
@@ -192,15 +196,11 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                         self.videos?.append(video)
                         DispatchQueue.main.async {
                             self.collectionView.reloadData()
-                            //self.refreshControl.endRefreshing()
-                            //self.activityIndicator.stopAnimating()
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0){
                         self.shouldAnimate = false
                         self.collectionView.reloadData()
-                        //self.refreshControl.endRefreshing()
-                        //self.activityIndicator.stopAnimating()
                     }
                 }
             }
@@ -247,7 +247,7 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.selectedCell = videos![indexPath.item]
         
-        Alamofire.request(videoApiCall, method: .get, parameters: ["part":"snippet,statistics", "id":selectedCell!.cellVideoId!, "key":videoPlaybackApiKey]).responseJSON { (response) in
+        Alamofire.request(videoApiUrl, method: .get, parameters: ["part":"snippet,statistics", "id":selectedCell!.cellVideoId!, "key":videoPlaybackApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 

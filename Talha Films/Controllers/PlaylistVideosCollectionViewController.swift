@@ -15,13 +15,17 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
     var playlistId: String?
     var playlistChannelId: String?
     
+    var playlistChannelImageName: String?
+    
     var selectedCell: ThumbnailDetails?
     
     private let playlistVideoApiKey = "AIzaSyB5V3VCOAOXmQgN4hbrNdqydo-JxTkeJvA"
+
     
     let playlistItemsApiUrl = "https://www.googleapis.com/youtube/v3/playlistItems"
     let videoApiUrl = "https://www.googleapis.com/youtube/v3/videos?"
     let youtubeChannelURL = "https://www.googleapis.com/youtube/v3/channels?"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,13 +44,13 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
     
     func fetchVideos(){
         self.playlistVideos = [ThumbnailDetails]()
+        //et id = playlistId
         Alamofire.request(playlistItemsApiUrl, method: .get, parameters: ["part":"snippet,contentDetails", "maxResults":"30" ,"playlistId":playlistId ?? "nil", "key":playlistVideoApiKey]).responseJSON { (response) in
             
             if let json = response.result.value as? [String: AnyObject] {
                 for items in json["items"] as! NSArray {
                     //print("Items of Video ID: \(items)")
                     let video = ThumbnailDetails()
-                    
                     
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
@@ -71,6 +75,7 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
                         video.videoTitle = title!["title"] as? String
                         video.videoImageName = thumbnailUrl!["maxres"]?["url"] as? String
                         video.cellVideoId = videoId
+                        video.channelImageName = self.playlistChannelImageName
                         video.channelId = title!["channelId"] as? String
                         
                         self.playlistVideos?.append(video)
@@ -81,9 +86,7 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
                     self.collectionView.reloadData()
                 }
             }
-            
         }
-        
     }
     
     
@@ -115,13 +118,12 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
             if let json = response.result.value as? [String: AnyObject] {
                 
                 for items in json["items"] as! NSArray {
-                    //print("Items of Video ID: \(items)")
                     
                     let statistics = (items as AnyObject)["statistics"] as? [String: AnyObject]
                     let viewCount = statistics!["viewCount"] as? String
                     //print("View Counts: \(viewCount)")
                     self.selectedCell!.numberofViews = viewCount
-                    
+        
                 }
             }
         }
