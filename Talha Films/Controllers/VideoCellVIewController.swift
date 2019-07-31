@@ -66,8 +66,6 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                     
                     let video = ThumbnailDetails()
                     
-                    
-                    
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
                     //print("Title: \(String(describing: title))")
                     
@@ -91,15 +89,11 @@ class VideoCellVIewController: UIViewController, UICollectionViewDelegate, UICol
                         videoId = resource!["videoId"] as? String ?? "nil"
                     }
                     
-                    //let maxresUrl = thumbnailUrl!["maxres"]?["url"]
-                    //print("RES URL: \(String(describing: maxresUrl))")
-                    
                     video.videoTitle = title!["title"] as? String
                     video.videoImageName = thumbnailUrl!["medium"]?["url"] as? String
                     video.cellVideoId = videoId
                     video.channelId = self.videoDetails?.channelId
                     video.channelImageName = self.channelImageStr
-                    
                     
                     //appending the videos
                     self.recommendedDetails?.append(video)

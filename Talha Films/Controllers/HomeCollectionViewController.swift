@@ -151,8 +151,6 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                                     //print("CHANNEL Items: \(items)")
                                     
                                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
-                                    //channel.channelTitle = title!["title"] as? String
-                                    //print("Channel Title in table view: \(String(describing: channel.channelTitle))")
                                     
                                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
                                     let highResUrl = thumbnailUrl!["high"]?["url"] as? String
@@ -195,10 +193,11 @@ class HomeCollectionViewController: UICollectionViewController, UICollectionView
                         //appending the videos
                         self.videos?.append(video)
                         DispatchQueue.main.async {
+                            self.videos?.shuffle()
                             self.collectionView.reloadData()
                         }
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0){
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0){
                         self.shouldAnimate = false
                         self.collectionView.reloadData()
                     }

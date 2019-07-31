@@ -30,8 +30,6 @@ class PlaylistVideosCollectionViewController: UICollectionViewController, UIColl
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print("In playlist view controller")
-        
         navigationItem.title = "Playlist Videos"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationItem.largeTitleDisplayMode = .always

@@ -68,21 +68,10 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                 for items in json["items"] as! NSArray {
                     //print("Items: \(items)")
                     
-                    
                     let title = (items as AnyObject)["snippet"] as? [String: AnyObject]
-                    //print("Title: \(String(describing: title))")
-                    
-                    //let contentDetails = (items as AnyObject)["contentDetails"] as? [String: AnyObject]
                     let playlistId = (items as AnyObject)["id"] as? String
-                    //print("VideoID: \(playlistId)")
-                    //print("Video ID: \(String(describing: videoId))") //here we are retrieving Video ID
-                    //print("Description: \(description)")
                     
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
-                    //print("URL: \(String(describing: thumbnailUrl))")
-                    
-                    //let maxresUrl = thumbnailUrl!["maxres"]?["url"]
-                    //print("RES URL: \(String(describing: maxresUrl))")
                     
                     let playlist = PlaylistItems()
                     playlist.playlistTitle = "Playlist Name: \(title!["title"] as? String ?? "nil")"
@@ -157,11 +146,6 @@ class SegmentViewController: UIViewController, UICollectionViewDelegate, UIColle
                     }
                     
                     let thumbnailUrl = title!["thumbnails"] as? [String: AnyObject]
-                    //print("URL: \(String(describing: thumbnailUrl))")
-                    
-                    //let maxresUrl = thumbnailUrl!["maxres"]?["url"]
-                    //print("RES URL: \(String(describing: maxresUrl))")
-                    
                     
                     video.videoTitle = title!["title"] as? String
                     self.cellVideoId = videoId
