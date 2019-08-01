@@ -50,7 +50,7 @@ class channelUITableViewCell: UITableViewCell {
         image.backgroundColor = #colorLiteral(red: 0, green: 0.5780889988, blue: 0.8655508161, alpha: 1)
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFill
-        image.layer.cornerRadius = image.bounds.height / 2
+        image.layer.cornerRadius = 40
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
