@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AE4C32F88CECF65AC5E322C4B023F4EC"
+               BlueprintIdentifier = "487BB2DAB25DB7D07800F1F2100E7377"
                BuildableName = "Pods_Talha_Films.framework"
                BlueprintName = "Pods-Talha Films"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AE4C32F88CECF65AC5E322C4B023F4EC"
+            BlueprintIdentifier = "487BB2DAB25DB7D07800F1F2100E7377"
             BuildableName = "Pods_Talha_Films.framework"
             BlueprintName = "Pods-Talha Films"
             ReferencedContainer = "container:Pods.xcodeproj">
